@@ -1,0 +1,16 @@
+[
+    {
+        "id": 1,
+        "name": "Spring Boot Fundamentals",
+        "description": "Learn how to build REST APIs with Spring Boot.",
+        "targetCompletionDate": "2026-10-15",
+        "status": "IN_PROGRESS"
+    },
+    {
+        "id": 2,
+        "name": "REST API Design",
+        "description": "Learn HTTP methods, status codes, and REST principles.",
+        "targetCompletionDate": "2026-11-01",
+        "status": "NOT_STARTED"
+    }
+]
