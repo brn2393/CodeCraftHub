@@ -152,10 +152,34 @@ public class CourseService {
                     }
             );
 
-            /*
-             * Protect the rest of the application from a null JSON array.
-             */
-            return courses == null ? new ArrayList<>() : courses;
+            if (courses == null) {
+                return new ArrayList<>();
+            }
+
+            long nextId = courses.stream()
+                    .map(Course::getId)
+                    .filter(id -> id != null)
+                    .mapToLong(Long::longValue)
+                    .max()
+                    .orElse(0L) + 1L;
+            boolean migrated = false;
+
+            for (Course course : courses) {
+                if (course.getId() == null) {
+                    course.setId(nextId++);
+                    migrated = true;
+                }
+                if (course.getCreatedAt() == null) {
+                    course.setCreatedAt(Instant.now());
+                    migrated = true;
+                }
+            }
+
+            if (migrated) {
+                writeCoursesToFile(courses);
+            }
+
+            return courses;
 
         } catch (IOException | RuntimeException exception) {
             throw new FileStorageException(

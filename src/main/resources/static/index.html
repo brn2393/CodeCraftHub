@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5fa">
+  <title>CodeCraftHub: Your Learning Management Platform</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #231d2b;
+      --muted: #756d7d;
+      --line: #e9e4ed;
+      --paper: #fff;
+      --wash: #f7f5fa;
+      --purple: #8b5cf6;
+      --purple-dark: #6d3de0;
+      --purple-pale: #f1ebff;
+      --amber: #f59e0b;
+      --amber-pale: #fff4db;
+      --red: #ef4444;
+      --red-pale: #fff0ef;
+      --green: #138a65;
+      --green-pale: #e9f7f1;
+      --shadow: 0 16px 42px rgb(42 25 57 / 7%);
+      font-family: "Aptos", "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      min-width: 320px;
+      margin: 0;
+      color: var(--ink);
+      background-color: var(--wash);
+      background-image: radial-gradient(#d8cde8 0.65px, transparent 0.65px);
+      background-size: 18px 18px;
+    }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 3px solid rgb(139 92 246 / 32%);
+      outline-offset: 2px;
+    }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    .shell { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
+    .topbar {
+      border-bottom: 1px solid rgb(35 29 43 / 9%);
+      background: rgb(255 255 255 / 88%);
+      backdrop-filter: blur(12px);
+    }
+    .topbar-inner {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      width: 40px;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: var(--ink);
+      border-radius: 11px;
+      font: 700 19px/1 Georgia, serif;
+      box-shadow: inset -5px -5px 0 rgb(139 92 246 / 65%);
+    }
+    .brand-name { font: 700 18px/1 Georgia, "Times New Roman", serif; letter-spacing: 0; }
+    .topbar-note { color: var(--muted); font-size: 13px; }
+
+    main { padding: 38px 0 70px; }
+    .intro {
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 27px;
+      animation: rise-in 460ms ease-out both;
+    }
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 11px;
+      color: var(--purple-dark);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.15px;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { width: 18px; height: 2px; background: var(--amber); content: ""; }
+    h1, h2, p { margin-top: 0; }
+    h1 {
+      max-width: 740px;
+      margin-bottom: 10px;
+      font: 500 40px/1.08 Georgia, "Times New Roman", serif;
+      letter-spacing: 0;
+    }
+    .intro-copy { max-width: 590px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.55; }
+    .refresh-button, .button {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 0 15px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      transition: background 140ms ease, border-color 140ms ease, transform 140ms ease;
+    }
+    .refresh-button { flex: 0 0 auto; color: var(--ink); background: white; border-color: var(--line); }
+    .refresh-button:hover, .button-secondary:hover { border-color: #cfc3df; background: #fcfaff; }
+    .btn-primary {
+      background: #8B5CF6;
+      border-color: #8B5CF6;
+      color: #fff;
+    }
+    .btn-success {
+      background-color: #F59E0B;
+      border-color: #F59E0B;
+      color: #fff;
+    }
+    .button-primary { color: white; background: var(--purple); }
+    .button-primary:hover { background: var(--purple-dark); transform: translateY(-1px); }
+    .button-secondary { color: var(--ink); background: white; border-color: var(--line); }
+    .button-danger { color: #bd2929; background: var(--red-pale); border-color: #ffd9d6; }
+    .button-danger:hover { background: #ffe4e2; }
+    .button:disabled, .refresh-button:disabled { cursor: wait; opacity: .62; }
+    .button svg, .refresh-button svg { width: 16px; height: 16px; }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-bottom: 24px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      animation: rise-in 500ms 55ms ease-out both;
+    }
+    .metric { position: relative; min-height: 104px; padding: 19px 22px; }
+    .metric + .metric { border-left: 1px solid var(--line); }
+    .metric-label { display: flex; align-items: center; gap: 8px; margin-bottom: 11px; color: var(--muted); font-size: 12px; font-weight: 650; }
+    .metric-dot { width: 8px; height: 8px; flex: 0 0 auto; border-radius: 50%; background: var(--purple); }
+    .metric:nth-child(2) .metric-dot { background: #a78bfa; }
+    .metric:nth-child(3) .metric-dot { background: var(--amber); }
+    .metric:nth-child(4) .metric-dot { background: var(--green); }
+    .metric-value { font: 500 27px/1 Georgia, "Times New Roman", serif; }
+
+    .workspace { display: grid; grid-template-columns: minmax(285px, 0.78fr) minmax(0, 1.65fr); align-items: start; gap: 22px; }
+    .panel {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      animation: rise-in 520ms 100ms ease-out both;
+    }
+    .panel-heading { padding: 20px 21px 15px; border-bottom: 1px solid var(--line); }
+    .panel-kicker { margin-bottom: 6px; color: var(--purple-dark); font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+    h2 { margin-bottom: 0; font: 500 22px/1.2 Georgia, "Times New Roman", serif; letter-spacing: 0; }
+    .form-body { display: grid; gap: 15px; padding: 20px 21px 22px; }
+    .field { display: grid; gap: 7px; }
+    .field label { color: #494151; font-size: 12px; font-weight: 700; }
+    .required { color: var(--purple-dark); }
+    .field input, .field textarea, .field select {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 11px;
+      color: var(--ink);
+      background: white;
+      border: 1px solid #ddd6e4;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    .field textarea { min-height: 89px; resize: vertical; line-height: 1.45; }
+    .field input::placeholder, .field textarea::placeholder { color: #aaa3af; }
+    .form-footer { display: grid; gap: 10px; padding-top: 3px; }
+    .form-footer .button { width: 100%; }
+    .form-hint { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
+
+    .course-panel { min-width: 0; }
+    .course-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 19px 21px 17px;
+      border-bottom: 1px solid var(--line);
+    }
+    .course-heading-meta { display: flex; align-items: center; gap: 10px; }
+    .count-chip { min-width: 26px; padding: 4px 8px; color: var(--purple-dark); background: var(--purple-pale); border-radius: 99px; text-align: center; font-size: 11px; font-weight: 800; }
+    .search-wrap { position: relative; width: min(220px, 42%); }
+    .search-wrap svg { position: absolute; top: 11px; left: 11px; width: 15px; height: 15px; color: #8a8290; pointer-events: none; }
+    .search-wrap input { width: 100%; height: 37px; padding: 0 11px 0 34px; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); background: #fff; font-size: 12px; }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { padding: 12px 14px; color: #817887; background: #fcfbfd; border-bottom: 1px solid var(--line); font-size: 10px; font-weight: 800; letter-spacing: .65px; text-transform: uppercase; white-space: nowrap; }
+    td { padding: 15px 14px; border-bottom: 1px solid #f0edf2; vertical-align: middle; font-size: 12px; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr { transition: background 120ms ease; }
+    tbody tr:hover { background: #fdfbff; }
+    .course-name { display: block; max-width: 250px; overflow: hidden; color: var(--ink); font-size: 13px; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+    .course-description { display: block; max-width: 250px; margin-top: 5px; overflow: hidden; color: var(--muted); text-overflow: ellipsis; white-space: nowrap; }
+    .date-cell { color: #514a57; white-space: nowrap; }
+    .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 8px; border-radius: 99px; font-size: 10px; font-weight: 750; white-space: nowrap; }
+    .status-pill::before { width: 6px; height: 6px; border-radius: 50%; background: currentColor; content: ""; }
+    .status-not-started { color: #7350bc; background: var(--purple-pale); }
+    .status-in-progress { color: #95600a; background: var(--amber-pale); }
+    .status-completed { color: #08764f; background: var(--green-pale); }
+    .actions { display: flex; justify-content: flex-end; gap: 6px; white-space: nowrap; }
+    .icon-button {
+      width: 31px;
+      height: 31px;
+      display: inline-grid;
+      place-items: center;
+      padding: 0;
+      color: #62596a;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+    .icon-button:hover { color: var(--purple-dark); background: var(--purple-pale); border-color: #ded0ff; }
+    .icon-button.remove:hover { color: var(--red); background: var(--red-pale); border-color: #ffd9d6; }
+    .icon-button svg { width: 15px; height: 15px; }
+    .empty-state { padding: 51px 22px; color: var(--muted); text-align: center; }
+    .empty-mark { width: 44px; height: 44px; display: grid; place-items: center; margin: 0 auto 13px; color: var(--purple-dark); background: var(--purple-pale); border-radius: 13px; }
+    .empty-mark svg { width: 21px; height: 21px; }
+    .empty-title { margin-bottom: 6px; color: var(--ink); font: 500 18px/1.2 Georgia, "Times New Roman", serif; }
+    .empty-copy { margin: 0; font-size: 12px; }
+    .table-footer { min-height: 43px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 18px; color: var(--muted); border-top: 1px solid var(--line); font-size: 11px; }
+
+    .toast-region { position: fixed; z-index: 20; top: 18px; right: 18px; width: min(390px, calc(100% - 36px)); display: grid; gap: 9px; }
+    .toast { display: flex; align-items: flex-start; gap: 10px; padding: 13px 14px; color: var(--ink); background: white; border: 1px solid var(--line); border-left: 4px solid var(--green); border-radius: 7px; box-shadow: 0 12px 34px rgb(25 16 36 / 15%); font-size: 13px; line-height: 1.4; animation: toast-in 200ms ease-out both; }
+    .toast.error { border-left-color: var(--red); }
+    .toast-mark { font-weight: 900; color: var(--green); }
+    .toast.error .toast-mark { color: var(--red); }
+    .toast-message { flex: 1; }
+    .toast-close { padding: 0 2px; color: var(--muted); background: none; border: 0; font-size: 18px; line-height: 1; }
+    .busy-indicator { position: fixed; z-index: 15; right: 19px; bottom: 18px; display: none; align-items: center; gap: 9px; padding: 10px 13px; color: white; background: var(--ink); border-radius: 7px; box-shadow: var(--shadow); font-size: 12px; }
+    .busy-indicator.visible { display: flex; }
+    .spinner { width: 15px; height: 15px; border: 2px solid rgb(255 255 255 / 40%); border-top-color: white; border-radius: 50%; animation: spin 700ms linear infinite; }
+    .button .spinner { border-color: rgb(255 255 255 / 45%); border-top-color: white; }
+
+    dialog {
+      width: min(510px, calc(100% - 28px));
+      max-height: min(92vh, 760px);
+      padding: 0;
+      overflow: auto;
+      color: var(--ink);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      box-shadow: 0 28px 90px rgb(27 18 37 / 25%);
+    }
+    dialog::backdrop { background: rgb(35 29 43 / 47%); backdrop-filter: blur(3px); }
+    .dialog-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 21px 23px 17px; border-bottom: 1px solid var(--line); }
+    .dialog-title { margin: 0 0 5px; font: 500 24px/1.1 Georgia, "Times New Roman", serif; }
+    .dialog-subtitle { margin: 0; color: var(--muted); font-size: 12px; }
+    .dialog-close { width: 30px; height: 30px; display: grid; place-items: center; color: var(--muted); background: white; border: 1px solid var(--line); border-radius: 6px; }
+    .dialog-close:hover { color: var(--ink); background: var(--wash); }
+    .dialog-body { display: grid; gap: 14px; padding: 20px 23px; }
+    .dialog-footer { display: flex; justify-content: flex-end; gap: 9px; padding: 14px 23px 20px; border-top: 1px solid var(--line); }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes rise-in { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes toast-in { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+
+    @media (max-width: 920px) {
+      .workspace { grid-template-columns: minmax(260px, .8fr) minmax(0, 1.2fr); gap: 15px; }
+      .shell { width: min(100% - 32px, 760px); }
+      .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric:nth-child(3) { border-left: 0; border-top: 1px solid var(--line); }
+      .metric:nth-child(4) { border-top: 1px solid var(--line); }
+      .table-scroll { overflow: visible; }
+      table, tbody { display: block; }
+      thead { display: none; }
+      tbody { padding: 0 14px; }
+      tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 12px; padding: 13px 0; border-bottom: 1px solid #f0edf2; }
+      tbody tr:last-child { border-bottom: 0; }
+      td { padding: 5px 0; border: 0; }
+      td:first-child { grid-column: 1 / -1; }
+      td:nth-child(2), td:nth-child(3), td:nth-child(4) { align-self: center; }
+      td:nth-child(4) { grid-column: 1; grid-row: 3; }
+      td:last-child { grid-column: 2; grid-row: 2 / span 2; align-self: center; }
+      td:nth-child(2)::before { content: "Due "; color: var(--muted); }
+      td:nth-child(4)::before { content: "Added "; color: var(--muted); }
+      .course-name, .course-description { max-width: 100%; }
+    }
+    @media (max-width: 650px) {
+      .shell { width: calc(100% - 28px); }
+      .topbar-inner { min-height: 64px; }
+      .topbar-note { display: none; }
+      main { padding: 28px 0 50px; }
+      .intro { align-items: flex-start; flex-direction: column; gap: 15px; margin-bottom: 21px; }
+      h1 { max-width: 480px; font-size: 34px; line-height: 1.06; }
+      .intro-copy { font-size: 14px; }
+      .refresh-button { min-height: 38px; }
+      .summary { margin-bottom: 17px; }
+      .metric { min-height: 88px; padding: 15px; }
+      .metric-value { font-size: 25px; }
+      .metric-label { margin-bottom: 9px; font-size: 11px; }
+      .workspace { grid-template-columns: 1fr; gap: 16px; }
+      .form-body { grid-template-columns: 1fr 1fr; gap: 13px; }
+      .field-wide, .form-footer { grid-column: 1 / -1; }
+      .form-footer { grid-template-columns: 1fr; }
+      .course-heading { align-items: flex-start; flex-direction: column; }
+      .course-heading-meta { width: 100%; justify-content: space-between; }
+      .search-wrap { width: 100%; }
+      .panel-heading, .course-heading { padding-left: 17px; padding-right: 17px; }
+      .dialog-heading, .dialog-body { padding-left: 18px; padding-right: 18px; }
+      .dialog-footer { padding-left: 18px; padding-right: 18px; }
+    }
+    @media (max-width: 390px) {
+      .form-body { grid-template-columns: 1fr; }
+      .field-wide, .form-footer { grid-column: auto; }
+      h1 { font-size: 31px; }
+      .brand-name { font-size: 16px; }
+      .actions { gap: 4px; }
+      .icon-button { width: 29px; height: 29px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden">
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 2M4 16l2 2a7 7 0 0 0 12.4-3"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4 4"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="m14 5 5 5M4 20l4.2-.8L19 8.4 15.6 5 4.8 15.8 4 20Z"/><path d="M13 20h7"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H20v18H7.5A2.5 2.5 0 0 0 5 22V4.5Z"/><path d="M5 5v17M9 6h7M9 10h7"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  </svg>
+
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div class="brand" aria-label="CodeCraftHub home">
+        <div class="brand-mark" aria-hidden="true">C</div>
+        <span class="brand-name">CodeCraftHub</span>
+      </div>
+      <div class="topbar-note">Learning, thoughtfully organized</div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">Learning workspace</p>
+        <h1 id="page-title">CodeCraftHub: Your Learning Management Platform</h1>
+        <p class="intro-copy">Keep every course, milestone, and next step in one clear view.</p>
+      </div>
+      <button class="refresh-button" id="refresh-button" type="button">
+        <svg aria-hidden="true"><use href="#i-refresh"/></svg>
+        Refresh courses
+      </button>
+    </section>
+
+    <section class="summary" aria-label="Course statistics" aria-live="polite">
+      <div class="metric"><div class="metric-label"><span class="metric-dot"></span>All courses</div><div class="metric-value" id="total-count">—</div></div>
+      <div class="metric"><div class="metric-label"><span class="metric-dot"></span>Not started</div><div class="metric-value" id="not-started-count">—</div></div>
+      <div class="metric"><div class="metric-label"><span class="metric-dot"></span>In progress</div><div class="metric-value" id="in-progress-count">—</div></div>
+      <div class="metric"><div class="metric-label"><span class="metric-dot"></span>Completed</div><div class="metric-value" id="completed-count">—</div></div>
+    </section>
+
+    <div class="workspace">
+      <section class="panel" aria-labelledby="add-heading">
+        <div class="panel-heading">
+          <p class="panel-kicker">Build your path</p>
+          <h2 id="add-heading">Add a course</h2>
+        </div>
+        <form class="form-body" id="add-form" novalidate>
+          <div class="field field-wide">
+            <label for="course-name">Course name <span class="required">*</span></label>
+            <input id="course-name" name="name" type="text" maxlength="120" placeholder="e.g. Python fundamentals" required>
+          </div>
+          <div class="field field-wide">
+            <label for="course-description">Description <span class="required">*</span></label>
+            <textarea id="course-description" name="description" maxlength="1000" placeholder="What will you learn?" required></textarea>
+          </div>
+          <div class="field">
+            <label for="course-date">Target date <span class="required">*</span></label>
+            <input id="course-date" name="target_date" type="date" required>
+          </div>
+          <div class="field">
+            <label for="course-status">Status <span class="required">*</span></label>
+            <select id="course-status" name="status" required>
+              <option value="Not Started">Not Started</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+          <div class="form-footer">
+            <button class="button button-primary" type="submit" id="add-submit">
+              <svg aria-hidden="true"><use href="#i-plus"/></svg>
+              Add course
+            </button>
+            <p class="form-hint">Fields marked <span class="required">*</span> are required. Your course list is saved by the CodeCraftHub API.</p>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel course-panel" aria-labelledby="courses-heading" aria-busy="false">
+        <div class="course-heading">
+          <div class="course-heading-meta">
+            <div>
+              <p class="panel-kicker">Your collection</p>
+              <h2 id="courses-heading">Courses <span class="count-chip" id="visible-count">0</span></h2>
+            </div>
+            <label class="search-wrap" aria-label="Search courses">
+              <svg aria-hidden="true"><use href="#i-search"/></svg>
+              <input id="course-search" type="search" placeholder="Search courses" autocomplete="off">
+            </label>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table aria-label="Courses">
+            <thead><tr><th scope="col">Course</th><th scope="col">Target date</th><th scope="col">Status</th><th scope="col">Added</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+            <tbody id="course-rows"></tbody>
+          </table>
+          <div id="empty-state" class="empty-state" hidden>
+            <div class="empty-mark"><svg aria-hidden="true"><use href="#i-book"/></svg></div>
+            <p class="empty-title" id="empty-title">Your next chapter starts here</p>
+            <p class="empty-copy" id="empty-copy">Add a course to start building your learning path.</p>
+          </div>
+        </div>
+        <div class="table-footer"><span id="list-caption">Courses are synced with your API</span><span>CodeCraftHub</span></div>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="false"></div>
+  <div class="busy-indicator" id="busy-indicator" role="status" aria-live="polite"><span class="spinner" aria-hidden="true"></span><span id="busy-label">Loading courses…</span></div>
+
+  <dialog id="edit-dialog" aria-labelledby="edit-heading">
+    <form id="edit-form" novalidate>
+      <div class="dialog-heading">
+        <div><p class="panel-kicker">Course details</p><h2 class="dialog-title" id="edit-heading">Edit course</h2><p class="dialog-subtitle" id="edit-subtitle">Update the learning plan.</p></div>
+        <button class="dialog-close" id="dialog-close" type="button" aria-label="Close edit dialog"><svg aria-hidden="true" width="16" height="16"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="dialog-body">
+        <div class="field"><label for="edit-name">Course name <span class="required">*</span></label><input id="edit-name" name="name" type="text" maxlength="120" required></div>
+        <div class="field"><label for="edit-description">Description <span class="required">*</span></label><textarea id="edit-description" name="description" maxlength="1000" required></textarea></div>
+        <div class="field"><label for="edit-date">Target date <span class="required">*</span></label><input id="edit-date" name="target_date" type="date" required></div>
+        <div class="field"><label for="edit-status">Status <span class="required">*</span></label><select id="edit-status" name="status" required><option value="Not Started">Not Started</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option></select></div>
+      </div>
+      <div class="dialog-footer">
+        <button class="button button-secondary" id="edit-cancel" type="button">Cancel</button>
+        <button class="button button-primary" id="edit-submit" type="submit">Save changes</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const API_URL = "http://localhost:8080/api/courses";
+      const STATUSES = ["Not Started", "In Progress", "Completed"];
+      const state = { courses: [], query: "", busyCount: 0, editingId: null };
+      const elements = {
+        rows: document.querySelector("#course-rows"),
+        empty: document.querySelector("#empty-state"),
+        emptyTitle: document.querySelector("#empty-title"),
+        emptyCopy: document.querySelector("#empty-copy"),
+        total: document.querySelector("#total-count"),
+        notStarted: document.querySelector("#not-started-count"),
+        inProgress: document.querySelector("#in-progress-count"),
+        completed: document.querySelector("#completed-count"),
+        visibleCount: document.querySelector("#visible-count"),
+        listCaption: document.querySelector("#list-caption"),
+        busy: document.querySelector("#busy-indicator"),
+        busyLabel: document.querySelector("#busy-label"),
+        coursePanel: document.querySelector(".course-panel"),
+        toastRegion: document.querySelector("#toast-region"),
+        dialog: document.querySelector("#edit-dialog"),
+        editForm: document.querySelector("#edit-form")
+      };
+
+      function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"']/g, character => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        })[character]);
+      }
+
+      function friendlyError(payload, fallback) {
+        if (payload && typeof payload === "object") {
+          if (payload.fields && typeof payload.fields === "object") {
+            return Object.values(payload.fields).filter(Boolean).join(". ") || payload.message || fallback;
+          }
+          if (payload.message) return payload.message;
+        }
+        return fallback;
+      }
+
+      function showToast(message, type = "success") {
+        const toast = document.createElement("div");
+        toast.className = `toast${type === "error" ? " error" : ""}`;
+        toast.setAttribute("role", type === "error" ? "alert" : "status");
+        toast.innerHTML = `<span class="toast-mark" aria-hidden="true">${type === "error" ? "!" : "✓"}</span><span class="toast-message">${escapeHtml(message)}</span><button class="toast-close" type="button" aria-label="Dismiss message">×</button>`;
+        toast.querySelector(".toast-close").addEventListener("click", () => toast.remove());
+        elements.toastRegion.append(toast);
+        window.setTimeout(() => toast.remove(), 6500);
+      }
+
+      function setBusy(label, active) {
+        state.busyCount = Math.max(0, state.busyCount + (active ? 1 : -1));
+        if (label) elements.busyLabel.textContent = label;
+        elements.busy.classList.toggle("visible", state.busyCount > 0);
+        elements.coursePanel.setAttribute("aria-busy", String(state.busyCount > 0));
+      }
+
+      async function apiRequest(url, options = {}, label = "Working…") {
+        setBusy(label, true);
+        try {
+          const response = await fetch(url, {
+            ...options,
+            headers: { ...(options.body ? { "Content-Type": "application/json" } : {}), ...options.headers }
+          });
+          const text = await response.text();
+          let payload = null;
+          if (text) {
+            try { payload = JSON.parse(text); }
+            catch { payload = { message: text }; }
+          }
+          if (!response.ok) {
+            throw new Error(friendlyError(payload, `The server returned ${response.status}. Please try again.`));
+          }
+          return payload;
+        } catch (error) {
+          if (error instanceof TypeError) {
+            throw new Error("Could not reach CodeCraftHub. Check that the backend is running at localhost:8080.");
+          }
+          throw error;
+        } finally {
+          setBusy(label, false);
+        }
+      }
+
+      function formatDate(value, includeTime = false) {
+        if (!value) return "—";
+        const date = new Date(value.length === 10 ? `${value}T00:00:00` : value);
+        if (Number.isNaN(date.getTime())) return value;
+        const options = includeTime
+          ? { year: "numeric", month: "short", day: "numeric" }
+          : { year: "numeric", month: "short", day: "numeric" };
+        return new Intl.DateTimeFormat(undefined, options).format(date);
+      }
+
+      function statusClass(status) {
+        if (status === "In Progress") return "status-in-progress";
+        if (status === "Completed") return "status-completed";
+        return "status-not-started";
+      }
+
+      function updateStats() {
+        const counts = Object.fromEntries(STATUSES.map(status => [status, 0]));
+        state.courses.forEach(course => {
+          if (Object.hasOwn(counts, course.status)) counts[course.status] += 1;
+        });
+        elements.total.textContent = state.courses.length;
+        elements.notStarted.textContent = counts["Not Started"];
+        elements.inProgress.textContent = counts["In Progress"];
+        elements.completed.textContent = counts.Completed;
+      }
+
+      function renderCourses() {
+        updateStats();
+        const query = state.query.trim().toLocaleLowerCase();
+        const filtered = state.courses.filter(course =>
+          `${course.name} ${course.description} ${course.status}`.toLocaleLowerCase().includes(query)
+        );
+        elements.visibleCount.textContent = filtered.length;
+        elements.listCaption.textContent = query
+          ? `${filtered.length} matching ${filtered.length === 1 ? "course" : "courses"}`
+          : `${state.courses.length} ${state.courses.length === 1 ? "course" : "courses"} synced with your API`;
+
+        elements.rows.innerHTML = filtered.map(course => `
+          <tr>
+            <td data-label="Course"><span class="course-name" title="${escapeHtml(course.name)}">${escapeHtml(course.name)}</span><span class="course-description" title="${escapeHtml(course.description)}">${escapeHtml(course.description)}</span></td>
+            <td class="date-cell" data-label="Target date">${escapeHtml(formatDate(course.target_date))}</td>
+            <td data-label="Status"><span class="status-pill ${statusClass(course.status)}">${escapeHtml(course.status)}</span></td>
+            <td class="date-cell" data-label="Added">${escapeHtml(formatDate(course.created_at, true))}</td>
+            <td data-label="Actions"><div class="actions">
+              <button class="icon-button" type="button" data-action="edit" data-id="${escapeHtml(course.id)}" aria-label="Edit ${escapeHtml(course.name)}" title="Edit course"><svg aria-hidden="true"><use href="#i-edit"/></svg></button>
+              <button class="btn-danger" type="button" onclick="handleDelete(${escapeHtml(course.id)})">Remove</button>
+            </div></td>
+          </tr>`).join("");
+
+        const isEmpty = filtered.length === 0;
+        elements.empty.hidden = !isEmpty;
+        if (isEmpty && state.courses.length > 0) {
+          elements.emptyTitle.textContent = "No courses match that search";
+          elements.emptyCopy.textContent = "Try another course name, description, or status.";
+        } else if (isEmpty) {
+          elements.emptyTitle.textContent = "Your next chapter starts here";
+          elements.emptyCopy.textContent = "Add a course to start building your learning path.";
+        }
+      }
+
+      async function loadCourses({ notify = false } = {}) {
+        try {
+          const courses = await apiRequest(API_URL, {}, "Loading courses…");
+          if (!Array.isArray(courses)) throw new Error("The API response was not a course list.");
+          state.courses = courses;
+          renderCourses();
+          if (notify) showToast("Course list refreshed.");
+        } catch (error) {
+          showToast(error.message || "Could not load courses.", "error");
+          if (state.courses.length === 0) renderCourses();
+        }
+      }
+
+      function formData(form) {
+        const values = new FormData(form);
+        return {
+          name: String(values.get("name") || "").trim(),
+          description: String(values.get("description") || "").trim(),
+          target_date: String(values.get("target_date") || ""),
+          status: String(values.get("status") || "")
+        };
+      }
+
+      function validateCourse(course) {
+        if (!course.name) return "Enter a course name.";
+        if (!course.description) return "Enter a course description.";
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(course.target_date) || Number.isNaN(new Date(`${course.target_date}T00:00:00`).getTime())) return "Choose a valid target date.";
+        if (!STATUSES.includes(course.status)) return "Choose a valid course status.";
+        return "";
+      }
+
+      function setButtonLoading(button, loading, loadingText) {
+        if (loading) {
+          button.dataset.originalContent = button.innerHTML;
+          button.disabled = true;
+          button.innerHTML = `<span class="spinner" aria-hidden="true"></span>${escapeHtml(loadingText)}`;
+        } else {
+          button.disabled = false;
+          if (button.dataset.originalContent) button.innerHTML = button.dataset.originalContent;
+          delete button.dataset.originalContent;
+        }
+      }
+
+      document.querySelector("#add-form").addEventListener("submit", async event => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const course = formData(form);
+        const validationError = validateCourse(course);
+        if (validationError) { showToast(validationError, "error"); return; }
+
+        const button = document.querySelector("#add-submit");
+        setButtonLoading(button, true, "Adding…");
+        try {
+          await apiRequest(API_URL, { method: "POST", body: JSON.stringify(course) }, "Adding course…");
+          form.reset();
+          showToast("Course added to your learning list.");
+          await loadCourses();
+        } catch (error) {
+          showToast(error.message || "Could not add the course.", "error");
+        } finally {
+          setButtonLoading(button, false);
+        }
+      });
+
+      function openEditDialog(course) {
+        state.editingId = course.id;
+        document.querySelector("#edit-subtitle").textContent = `Course #${course.id} · Added ${formatDate(course.created_at, true)}`;
+        document.querySelector("#edit-name").value = course.name || "";
+        document.querySelector("#edit-description").value = course.description || "";
+        document.querySelector("#edit-date").value = course.target_date || "";
+        document.querySelector("#edit-status").value = course.status || "Not Started";
+        elements.dialog.showModal();
+        document.querySelector("#edit-name").focus();
+      }
+
+      async function handleDelete(courseId) {
+        const course = state.courses.find(item => String(item.id) === String(courseId));
+        if (!course) {
+          showToast("That course is no longer in the list. Refresh and try again.", "error");
+          return;
+        }
+
+        if (!window.confirm(`Remove “${course.name}” from your courses? This cannot be undone.`)) return;
+
+        try {
+          await apiRequest(`${API_URL}/${encodeURIComponent(course.id)}`, { method: "DELETE" }, "Removing course…");
+          state.courses = state.courses.filter(item => String(item.id) !== String(course.id));
+          renderCourses();
+          showToast(`“${course.name}” was removed.`);
+        } catch (error) {
+          showToast(error.message || "Could not remove the course.", "error");
+        }
+      }
+
+      elements.rows.addEventListener("click", async event => {
+        const button = event.target.closest("button[data-action]");
+        if (!button) return;
+        const course = state.courses.find(item => String(item.id) === button.dataset.id);
+        if (!course) { showToast("That course is no longer in the list. Refresh and try again.", "error"); return; }
+
+        if (button.dataset.action === "edit") {
+          openEditDialog(course);
+          return;
+        }
+      });
+
+      elements.editForm.addEventListener("submit", async event => {
+        event.preventDefault();
+        const course = formData(event.currentTarget);
+        const validationError = validateCourse(course);
+        if (validationError) { showToast(validationError, "error"); return; }
+
+        const button = document.querySelector("#edit-submit");
+        setButtonLoading(button, true, "Saving…");
+        try {
+          await apiRequest(`${API_URL}/${encodeURIComponent(state.editingId)}`, { method: "PUT", body: JSON.stringify(course) }, "Saving changes…");
+          elements.dialog.close();
+          showToast("Course changes saved.");
+          await loadCourses();
+        } catch (error) {
+          showToast(error.message || "Could not save course changes.", "error");
+        } finally {
+          setButtonLoading(button, false);
+        }
+      });
+
+      document.querySelector("#dialog-close").addEventListener("click", () => elements.dialog.close());
+      document.querySelector("#edit-cancel").addEventListener("click", () => elements.dialog.close());
+      document.querySelector("#refresh-button").addEventListener("click", async event => {
+        const button = event.currentTarget;
+        button.disabled = true;
+        await loadCourses({ notify: true });
+        button.disabled = false;
+      });
+      document.querySelector("#course-search").addEventListener("input", event => {
+        state.query = event.currentTarget.value;
+        renderCourses();
+      });
+
+      loadCourses();
+    })();
+  </script>
+</body>
+</html>

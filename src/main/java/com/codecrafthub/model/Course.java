@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -23,7 +22,7 @@ public class Course {
      *
      * READ_ONLY prevents clients from supplying or changing the ID.
      */
-    @JsonProperty(access = Access.READ_ONLY)
+    @JsonProperty
     private Long id;
 
     /**
@@ -59,7 +58,7 @@ public class Course {
      *
      * Clients cannot provide or change it.
      */
-    @JsonProperty(value = "created_at", access = Access.READ_ONLY)
+    @JsonProperty("created_at")
     private Instant createdAt;
 
     /**
